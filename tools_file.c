@@ -1,25 +1,22 @@
 #include "monty.h"
 
 /**
- * open_file - Opens a file for reading
- * @file_name: The file path
- * Return: void
+ * open_file - Opens a file and reads its contents.
+ * @file_name: The file name/path to open.
  */
 void open_file(char *file_name)
 {
 	FILE *fd = fopen(file_name, "r");
-
 	if (file_name == NULL || fd == NULL)
-		err(2, file_name);
+		err(2, "Error opening file");
 
 	read_file(fd);
 	fclose(fd);
 }
 
 /**
- * read_file - Reads a file line by line
- * @fd: File descriptor
- * Return: void
+ * read_file - Reads a file.
+ * @fd: File descriptor.
  */
 void read_file(FILE *fd)
 {
@@ -35,11 +32,11 @@ void read_file(FILE *fd)
 }
 
 /**
- * parse_line - Parses each line into tokens to determine the opcode
- * @buffer: Line from the file
- * @line_number: Line number
- * @format: Storage format (0 for stack, 1 for queue)
- * Return: Returns 0 if the opcode is "stack" or 1 if "queue"
+ * parse_line - Separates each line into tokens to determine which function to call.
+ * @buffer: Line from the file.
+ * @line_number: Line number.
+ * @format: Storage format (0 for stack, 1 for queue).
+ * @return: 0 for stack, 1 for queue.
  */
 int parse_line(char *buffer, int line_number, int format)
 {
@@ -47,29 +44,28 @@ int parse_line(char *buffer, int line_number, int format)
 	const char *delim = "\n ";
 
 	if (buffer == NULL)
-		err(4);
+		err(4, "Error parsing line");
 
 	opcode = strtok(buffer, delim);
 	if (opcode == NULL)
-		return (format);
+		return format;
 	value = strtok(NULL, delim);
 
 	if (strcmp(opcode, "stack") == 0)
-		return (0);
+		return 0;
 	if (strcmp(opcode, "queue") == 0)
-		return (1);
+		return 1;
 
 	find_func(opcode, value, line_number, format);
-	return (format);
+	return format;
 }
 
 /**
- * find_func - Finds the appropriate function for the opcode
- * @opcode: Opcode
- * @value: Argument of the opcode
- * @format: Storage format (0 for stack, 1 for queue)
- * @ln: Line number
- * Return: void
+ * find_func - Find the appropriate function for the opcode.
+ * @opcode: Opcode.
+ * @value: Argument of opcode.
+ * @format: Storage format (0 for stack, 1 for queue).
+ * @ln: Line number.
  */
 void find_func(char *opcode, char *value, int ln, int format)
 {
@@ -111,14 +107,14 @@ void find_func(char *opcode, char *value, int ln, int format)
 }
 
 /**
- * call_fun - Calls the required function based on the opcode
- * @func: Pointer to the function to be called
- * @op: String representing the opcode
- * @val: String representing a numeric value
- * @ln: Line number for the instruction
- * @format: Format specifier (0 for stack, 1 for queue)
+ * call_fun - Calls the required function.
+ * @func: Pointer to the function to be called.
+ * @op: String representing the opcode.
+ * @val: String representing a numeric value.
+ * @ln: Line number for the instruction.
+ * @format: Format specifier (0 for stack, 1 for queue).
  */
-void call_fun(op_func func, char *op, char *val, int ln, int format)
+void call_fun(op_func func, const char *op, const char *val, int ln, int format)
 {
 	stack_t *node;
 	int flag;
@@ -148,3 +144,4 @@ void call_fun(op_func func, char *op, char *val, int ln, int format)
 	else
 		func(&head, ln);
 }
+
